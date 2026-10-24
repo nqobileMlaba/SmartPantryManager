@@ -85,5 +85,14 @@
             android:layout_marginTop="8dp"
             android:text="Cancel" />
 
+        <Button
+            android:id="@+id/buttonDelete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Delete"
+            android:textColor="#D32F2F"
+            android:visibility="gone" />
+
     </LinearLayout>
 </ScrollView>

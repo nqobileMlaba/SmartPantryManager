@@ -116,4 +116,14 @@ public class PantryDataSource {
 
         return rowsChanged > 0;
     }
+
+    // DELETE: remove one pantry item by its id
+    public boolean deletePantryItem(long itemId) {
+        int rowsDeleted = database.delete(
+                PantryDBHelper.TABLE_PANTRY,
+                PantryDBHelper.COL_PANTRY_ID + " = ?",
+                new String[]{String.valueOf(itemId)}
+        );
+        return rowsDeleted > 0;
+    }
 }

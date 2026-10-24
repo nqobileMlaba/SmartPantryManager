@@ -1,5 +1,8 @@
 package com.example.smartpantrymanager;
 
+import android.view.View;
+import androidx.appcompat.app.AlertDialog;
+
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -51,6 +54,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         initUnitSpinner();
         initSaveButton();
         initCancelButton();
+        initDeleteButton();
 
         // Did the previous screen send us an item id?
         long passedId = getIntent().getLongExtra("pantryItemId", -1);
@@ -76,6 +80,40 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         buttonCancel.setOnClickListener(v -> finish());
     }
 
+    private void initDeleteButton() {
+        Button buttonDelete = findViewById(R.id.buttonDelete);
+        buttonDelete.setOnClickListener(v -> confirmDelete());
+    }
+
+    private void confirmDelete() {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete ingredient")
+                .setMessage("Are you sure you want to delete "
+                        + editName.getText().toString().trim() + "?")
+                .setPositiveButton("Delete", (dialog, which) -> deleteItem())
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void deleteItem() {
+        boolean wasSuccessful;
+        PantryDataSource ds = new PantryDataSource(this);
+        try {
+            ds.open();
+            wasSuccessful = ds.deletePantryItem(currentItemId);
+            ds.close();
+        } catch (Exception e) {
+            wasSuccessful = false;
+        }
+
+        if (wasSuccessful) {
+            Toast.makeText(this, "Ingredient deleted", Toast.LENGTH_SHORT).show();
+            finish();   // MainActivity.onResume() refreshes the list
+        } else {
+            Toast.makeText(this, "Could not delete. Please try again.", Toast.LENGTH_LONG).show();
+        }
+    }
+
     // Loads an existing item from the database and fills the form
     private void loadItemForEditing(long itemId) {
         PantryItem item = null;
@@ -96,6 +134,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
 
         TextView textFormTitle = findViewById(R.id.textFormTitle);
         textFormTitle.setText("Edit Ingredient");
+        findViewById(R.id.buttonDelete).setVisibility(View.VISIBLE);
 
         editName.setText(item.getName());
         editQuantity.setText(formatQuantity(item.getQuantity()));
