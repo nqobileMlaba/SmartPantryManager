@@ -12,9 +12,14 @@ import java.util.ArrayList;
 
 public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryViewHolder> {
 
-    private ArrayList<PantryItem> pantryItems;
+    // ---------- NEW: a "contract" for whoever wants to hear about taps ----------
+    public interface OnItemClickListener {
+        void onItemClick(PantryItem item);
+    }
 
-    // ---------- The ViewHolder: holds the three TextViews of one row ----------
+    private ArrayList<PantryItem> pantryItems;
+    private OnItemClickListener clickListener;
+
     public static class PantryViewHolder extends RecyclerView.ViewHolder {
         public final TextView textName;
         public final TextView textQuantity;
@@ -28,12 +33,15 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         }
     }
 
-    // ---------- Constructor: receives the data to display ----------
     public PantryAdapter(ArrayList<PantryItem> pantryItems) {
         this.pantryItems = pantryItems;
     }
 
-    // ---------- Builds an empty row from item_pantry.xml ----------
+    // ---------- NEW: the activity calls this to say "tell me about taps" ----------
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.clickListener = listener;
+    }
+
     @NonNull
     @Override
     public PantryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,7 +50,6 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         return new PantryViewHolder(view);
     }
 
-    // ---------- Fills one row with the data at this position ----------
     @Override
     public void onBindViewHolder(@NonNull PantryViewHolder holder, int position) {
         PantryItem item = pantryItems.get(position);
@@ -55,21 +62,25 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         } else {
             holder.textExpiry.setText("Expires: " + item.getExpiryDate());
         }
+
+        // ---------- NEW: when this row is tapped, pass the item to the listener ----------
+        holder.itemView.setOnClickListener(v -> {
+            if (clickListener != null) {
+                clickListener.onItemClick(item);
+            }
+        });
     }
 
-    // ---------- How many rows in total ----------
     @Override
     public int getItemCount() {
         return pantryItems.size();
     }
 
-    // ---------- Replace the data and redraw the list ----------
     public void setPantryItems(ArrayList<PantryItem> newItems) {
         this.pantryItems = newItems;
         notifyDataSetChanged();
     }
 
-    // ---------- Shows 6 instead of 6.0, but keeps 1.5 as 1.5 ----------
     private String formatQuantity(double quantity) {
         if (quantity == Math.floor(quantity)) {
             return String.valueOf((long) quantity);

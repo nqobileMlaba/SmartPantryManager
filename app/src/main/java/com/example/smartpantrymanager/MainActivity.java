@@ -41,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
         rvPantry.setLayoutManager(new LinearLayoutManager(this));
         pantryAdapter = new PantryAdapter(new ArrayList<PantryItem>());
         rvPantry.setAdapter(pantryAdapter);
+        pantryAdapter.setOnItemClickListener(item -> {
+            Intent intent = new Intent(MainActivity.this, AddEditIngredientActivity.class);
+            intent.putExtra("pantryItemId", item.getId());
+            startActivity(intent);
+        });
         initAddButton();
     }
 

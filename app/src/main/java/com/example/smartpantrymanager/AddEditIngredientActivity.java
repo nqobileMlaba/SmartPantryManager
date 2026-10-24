@@ -5,6 +5,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -24,7 +25,9 @@ public class AddEditIngredientActivity extends AppCompatActivity {
     private EditText editExpiry;
     private Spinner spinnerUnit;
 
-    // The only units the user can choose from
+    // -1 means "adding a new item". Any other number means "editing that item".
+    private long currentItemId = -1;
+
     private final String[] units = {
             "pieces", "g", "kg", "ml", "litres", "cups", "tbsp", "tsp", "slices"
     };
@@ -48,6 +51,13 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         initUnitSpinner();
         initSaveButton();
         initCancelButton();
+
+        // Did the previous screen send us an item id?
+        long passedId = getIntent().getLongExtra("pantryItemId", -1);
+        if (passedId != -1) {
+            currentItemId = passedId;
+            loadItemForEditing(passedId);
+        }
     }
 
     private void initUnitSpinner() {
@@ -66,9 +76,55 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         buttonCancel.setOnClickListener(v -> finish());
     }
 
+    // Loads an existing item from the database and fills the form
+    private void loadItemForEditing(long itemId) {
+        PantryItem item = null;
+        PantryDataSource ds = new PantryDataSource(this);
+        try {
+            ds.open();
+            item = ds.getSpecificItem(itemId);
+            ds.close();
+        } catch (Exception e) {
+            item = null;
+        }
+
+        if (item == null) {
+            Toast.makeText(this, "Could not load this ingredient", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
+        TextView textFormTitle = findViewById(R.id.textFormTitle);
+        textFormTitle.setText("Edit Ingredient");
+
+        editName.setText(item.getName());
+        editQuantity.setText(formatQuantity(item.getQuantity()));
+        spinnerUnit.setSelection(findUnitPosition(item.getUnit()));
+        if (item.getExpiryDate() != null) {
+            editExpiry.setText(item.getExpiryDate());
+        }
+    }
+
+    // Finds where a unit sits in our units array (0 if not found)
+    private int findUnitPosition(String unit) {
+        for (int i = 0; i < units.length; i++) {
+            if (units[i].equals(unit)) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private String formatQuantity(double quantity) {
+        if (quantity == Math.floor(quantity)) {
+            return String.valueOf((long) quantity);
+        }
+        return String.valueOf(quantity);
+    }
+
     private void saveIngredient() {
         if (!validateInput()) {
-            return;   // stop here: errors are already shown on the fields
+            return;
         }
 
         String name = editName.getText().toString().trim();
@@ -76,41 +132,46 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         String unit = spinnerUnit.getSelectedItem().toString();
         String expiry = editExpiry.getText().toString().trim();
         if (expiry.isEmpty()) {
-            expiry = null;   // optional field left blank
+            expiry = null;
         }
 
-        PantryItem item = new PantryItem(0, name, quantity, unit, expiry);
+        // currentItemId is -1 for a new item, or the real id when editing
+        PantryItem item = new PantryItem(currentItemId, name, quantity, unit, expiry);
 
-        boolean wasSuccessful = false;
+        boolean wasSuccessful;
         PantryDataSource ds = new PantryDataSource(this);
         try {
             ds.open();
-            wasSuccessful = ds.insertPantryItem(item);
+            if (currentItemId == -1) {
+                wasSuccessful = ds.insertPantryItem(item);     // ADD mode
+            } else {
+                wasSuccessful = ds.updatePantryItem(item);     // EDIT mode
+            }
             ds.close();
         } catch (Exception e) {
             wasSuccessful = false;
         }
 
         if (wasSuccessful) {
-            Toast.makeText(this, name + " added to your pantry", Toast.LENGTH_SHORT).show();
-            finish();   // close this screen and go back to the Pantry List
+            String message = (currentItemId == -1)
+                    ? name + " added to your pantry"
+                    : name + " updated";
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            finish();
         } else {
             Toast.makeText(this, "Could not save. Please try again.", Toast.LENGTH_LONG).show();
         }
     }
 
-    // Returns true only if every field is acceptable. Shows ALL errors at once.
     private boolean validateInput() {
         boolean isValid = true;
 
-        // 1. Name must not be empty
         String name = editName.getText().toString().trim();
         if (name.isEmpty()) {
             editName.setError("Please enter the ingredient name");
             isValid = false;
         }
 
-        // 2. Quantity must be a number greater than 0
         String quantityText = editQuantity.getText().toString().trim();
         if (quantityText.isEmpty()) {
             editQuantity.setError("Please enter a quantity");
@@ -128,7 +189,6 @@ public class AddEditIngredientActivity extends AppCompatActivity {
             }
         }
 
-        // 3. Expiry date is optional, but if typed it must be a real date
         String expiry = editExpiry.getText().toString().trim();
         if (!expiry.isEmpty() && !isValidDate(expiry)) {
             editExpiry.setError("Use the format YYYY-MM-DD, e.g. 2026-11-20");
@@ -140,10 +200,10 @@ public class AddEditIngredientActivity extends AppCompatActivity {
 
     private boolean isValidDate(String text) {
         if (!text.matches("\\d{4}-\\d{2}-\\d{2}")) {
-            return false;   // wrong shape
+            return false;
         }
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        format.setLenient(false);   // reject dates like 2026-02-31
+        format.setLenient(false);
         try {
             format.parse(text);
             return true;
