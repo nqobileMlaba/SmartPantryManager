@@ -1,5 +1,8 @@
 package com.example.smartpantrymanager;
 
+import android.content.Intent;
+import android.widget.Button;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -38,10 +41,7 @@ public class MainActivity extends AppCompatActivity {
         rvPantry.setLayoutManager(new LinearLayoutManager(this));
         pantryAdapter = new PantryAdapter(new ArrayList<PantryItem>());
         rvPantry.setAdapter(pantryAdapter);
-
-        // ---------- TEMPORARY TEST CODE (remove after testing) ----------
-        insertTestDataIfEmpty();
-        // ---------- END TEMPORARY TEST CODE ----------
+        initAddButton();
     }
 
     @Override
@@ -70,6 +70,14 @@ public class MainActivity extends AppCompatActivity {
             textEmpty.setVisibility(View.GONE);
             rvPantry.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void initAddButton() {
+        Button buttonAdd = findViewById(R.id.buttonAddIngredient);
+        buttonAdd.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AddEditIngredientActivity.class);
+            startActivity(intent);
+        });
     }
 
 
