@@ -1,14 +1,25 @@
 package com.example.smartpantrymanager;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    private RecyclerView rvPantry;
+    private TextView textEmpty;
+    private PantryAdapter pantryAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,5 +31,57 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        rvPantry = findViewById(R.id.rvPantry);
+        textEmpty = findViewById(R.id.textEmpty);
+
+        rvPantry.setLayoutManager(new LinearLayoutManager(this));
+        pantryAdapter = new PantryAdapter(new ArrayList<PantryItem>());
+        rvPantry.setAdapter(pantryAdapter);
+
+        // ---------- TEMPORARY TEST CODE (remove after testing) ----------
+        insertTestDataIfEmpty();
+        // ---------- END TEMPORARY TEST CODE ----------
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadPantryItems();   // refresh the list every time the screen becomes visible
+    }
+
+    private void loadPantryItems() {
+        ArrayList<PantryItem> items = new ArrayList<>();
+        PantryDataSource ds = new PantryDataSource(this);
+        try {
+            ds.open();
+            items = ds.getAllPantryItems();
+            ds.close();
+        } catch (Exception e) {
+            Toast.makeText(this, "Could not load pantry items", Toast.LENGTH_LONG).show();
+        }
+
+        pantryAdapter.setPantryItems(items);
+
+        if (items.isEmpty()) {
+            textEmpty.setVisibility(View.VISIBLE);
+            rvPantry.setVisibility(View.GONE);
+        } else {
+            textEmpty.setVisibility(View.GONE);
+            rvPantry.setVisibility(View.VISIBLE);
+        }
+    }
+
+    // ---------- TEMPORARY TEST METHOD (remove after testing) ----------
+    private void insertTestDataIfEmpty() {
+        PantryDataSource ds = new PantryDataSource(this);
+        ds.open();
+        if (ds.getAllPantryItems().isEmpty()) {
+            ds.insertPantryItem(new PantryItem(0, "Eggs", 6, "pieces", "2026-11-05"));
+            ds.insertPantryItem(new PantryItem(0, "Milk", 1.5, "litres", "2026-10-30"));
+            ds.insertPantryItem(new PantryItem(0, "Flour", 2, "kg", null));
+        }
+        ds.close();
+    }
+    // ---------- END TEMPORARY TEST METHOD ----------
 }
