@@ -68,6 +68,10 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
                 .getSharedPreferences(SettingsActivity.PREFS_NAME, Context.MODE_PRIVATE)
                 .getBoolean(SettingsActivity.KEY_EXPIRY_ALERT, false);
 
+        int alertDays = holder.itemView.getContext()
+                        .getSharedPreferences(SettingsActivity.PREFS_NAME, Context.MODE_PRIVATE)
+                        .getInt(SettingsActivity.KEY_EXPIRY_DAYS, 3);
+
         holder.textExpiry.setTextColor(holder.textName.getTextColors().getDefaultColor());
 
         if (item.getExpiryDate() == null || item.getExpiryDate().isEmpty()) {
@@ -77,7 +81,7 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
             if (alertOn && days < 0) {
                 holder.textExpiry.setText("Expired! " + item.getExpiryDate());
                 holder.textExpiry.setTextColor(Color.RED);
-            } else if (alertOn && days <= 3) {
+            } else if (alertOn && days <= alertDays) {
                 holder.textExpiry.setText("Expiring soon! " + item.getExpiryDate());
                 holder.textExpiry.setTextColor(Color.RED);
             } else {

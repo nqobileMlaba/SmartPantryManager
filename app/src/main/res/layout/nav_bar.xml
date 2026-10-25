@@ -10,6 +10,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:drawableTop="@drawable/ic_pantry"
+        android:drawableTint="@color/white"
         android:text="Pantry"
         style="?android:attr/borderlessButtonStyle"
         android:textColor="#FFFFFF" />
@@ -19,6 +21,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:drawableTop="@drawable/ic_recipes"
+        android:drawableTint="@color/white"
         android:text="Recipes"
         style="?android:attr/borderlessButtonStyle"
         android:textColor="#FFFFFF" />
@@ -28,6 +32,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:drawableTop="@drawable/ic_settings"
+        android:drawableTint="@color/white"
         android:text="Settings"
         style="?android:attr/borderlessButtonStyle"
         android:textColor="#FFFFFF" />
