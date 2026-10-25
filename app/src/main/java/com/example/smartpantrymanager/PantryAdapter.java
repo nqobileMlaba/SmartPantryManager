@@ -1,5 +1,12 @@
 package com.example.smartpantrymanager;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,8 +64,17 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         holder.textName.setText(item.getName());
         holder.textQuantity.setText(formatQuantity(item.getQuantity()) + " " + item.getUnit());
 
+        boolean alertOn = holder.itemView.getContext()
+                .getSharedPreferences(SettingsActivity.PREFS_NAME, Context.MODE_PRIVATE)
+                .getBoolean(SettingsActivity.KEY_EXPIRY_ALERT, false);
+
+        holder.textExpiry.setTextColor(holder.textName.getTextColors().getDefaultColor());
+
         if (item.getExpiryDate() == null || item.getExpiryDate().isEmpty()) {
             holder.textExpiry.setText("No expiry date");
+        } else if (alertOn && isExpiringSoon(item.getExpiryDate())) {
+            holder.textExpiry.setText("Expiring soon! " + item.getExpiryDate());
+            holder.textExpiry.setTextColor(Color.RED);
         } else {
             holder.textExpiry.setText("Expires: " + item.getExpiryDate());
         }
@@ -86,5 +102,17 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
             return String.valueOf((long) quantity);
         }
         return String.valueOf(quantity);
+    }
+
+    // true if the date is today or within the next 3 days (or already past)
+    private boolean isExpiringSoon(String dateText) {
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            Date expiry = format.parse(dateText);
+            long daysLeft = (expiry.getTime() - System.currentTimeMillis()) / (1000L * 60 * 60 * 24);
+            return daysLeft <= 3;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
