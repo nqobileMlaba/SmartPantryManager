@@ -1,5 +1,6 @@
 package com.example.smartpantrymanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -38,6 +39,12 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
         rvRecipes.setLayoutManager(new LinearLayoutManager(this));
         recipeAdapter = new RecipeAdapter(new ArrayList<Recipe>());
         rvRecipes.setAdapter(recipeAdapter);
+
+        recipeAdapter.setOnRecipeClickListener(recipe -> {
+            Intent intent = new Intent(SuggestedRecipesActivity.this, RecipeDetailActivity.class);
+            intent.putExtra("recipeId", recipe.getId());
+            startActivity(intent);
+        });
     }
 
     @Override
