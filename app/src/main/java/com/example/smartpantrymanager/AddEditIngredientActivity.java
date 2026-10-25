@@ -204,6 +204,9 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         if (name.isEmpty()) {
             editName.setError("Please enter the ingredient name");
             isValid = false;
+        } else if (name.length() < 2) {
+            editName.setError("Name is too short");
+            isValid = false;
         }
 
         String quantityText = editQuantity.getText().toString().trim();
@@ -215,6 +218,9 @@ public class AddEditIngredientActivity extends AppCompatActivity {
                 double quantity = Double.parseDouble(quantityText);
                 if (quantity <= 0) {
                     editQuantity.setError("Quantity must be greater than 0");
+                    isValid = false;
+                } else if (quantity > 100000) {
+                    editQuantity.setError("Quantity is too large");
                     isValid = false;
                 }
             } catch (NumberFormatException e) {

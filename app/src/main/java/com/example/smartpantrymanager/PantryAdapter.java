@@ -72,14 +72,20 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
 
         if (item.getExpiryDate() == null || item.getExpiryDate().isEmpty()) {
             holder.textExpiry.setText("No expiry date");
-        } else if (alertOn && isExpiringSoon(item.getExpiryDate())) {
-            holder.textExpiry.setText("Expiring soon! " + item.getExpiryDate());
-            holder.textExpiry.setTextColor(Color.RED);
         } else {
-            holder.textExpiry.setText("Expires: " + item.getExpiryDate());
+            long days = daysUntil(item.getExpiryDate());
+            if (alertOn && days < 0) {
+                holder.textExpiry.setText("Expired! " + item.getExpiryDate());
+                holder.textExpiry.setTextColor(Color.RED);
+            } else if (alertOn && days <= 3) {
+                holder.textExpiry.setText("Expiring soon! " + item.getExpiryDate());
+                holder.textExpiry.setTextColor(Color.RED);
+            } else {
+                holder.textExpiry.setText("Expires: " + item.getExpiryDate());
+            }
         }
 
-        // ---------- NEW: when this row is tapped, pass the item to the listener ----------
+        // when this row is tapped, pass the item to the listener
         holder.itemView.setOnClickListener(v -> {
             if (clickListener != null) {
                 clickListener.onItemClick(item);
@@ -104,15 +110,16 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         return String.valueOf(quantity);
     }
 
-    // true if the date is today or within the next 3 days (or already past)
-    private boolean isExpiringSoon(String dateText) {
+    // Days from now until the date (negative = already past). Large number if unreadable.
+    private long daysUntil(String dateText) {
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
             Date expiry = format.parse(dateText);
-            long daysLeft = (expiry.getTime() - System.currentTimeMillis()) / (1000L * 60 * 60 * 24);
-            return daysLeft <= 3;
+            double days = (expiry.getTime() - System.currentTimeMillis()) / (1000.0 * 60 * 60 * 24);
+            return (long) Math.ceil(days);
         } catch (Exception e) {
-            return false;
+            return Long.MAX_VALUE;
         }
     }
+
 }
