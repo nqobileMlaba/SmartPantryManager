@@ -47,8 +47,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
         initAddButton();
-        initRecipesButton();
+
+
+        NavHelper.setup(this);
     }
+
 
     @Override
     protected void onResume() {
@@ -86,12 +89,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initRecipesButton() {
-        Button buttonRecipes = findViewById(R.id.buttonSuggested);
-        buttonRecipes.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, SuggestedRecipesActivity.class));
-        });
-    }
+
 
 
 }

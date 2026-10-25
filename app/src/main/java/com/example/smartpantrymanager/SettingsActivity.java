@@ -39,5 +39,7 @@ public class SettingsActivity extends AppCompatActivity {
                         .edit()
                         .putBoolean(KEY_EXPIRY_ALERT, isChecked)
                         .apply());
+
+        NavHelper.setup(this);
     }
 }

@@ -45,6 +45,8 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
             intent.putExtra("recipeId", recipe.getId());
             startActivity(intent);
         });
+
+        NavHelper.setup(this);
     }
 
     @Override
