@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/settingsRoot"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/app_background">
 
     <TextView
         android:id="@+id/textSettingsTitle"
@@ -15,6 +16,7 @@
         android:text="Settings"
         android:textSize="24sp"
         android:textStyle="bold"
+        android:textColor="@color/primary_dark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

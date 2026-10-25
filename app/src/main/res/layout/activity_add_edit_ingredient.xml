@@ -3,7 +3,8 @@
     android:id="@+id/addRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="@color/app_background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +18,8 @@
             android:layout_height="wrap_content"
             android:text="Add Ingredient"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/primary_dark"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -83,7 +85,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Cancel" />
+            android:text="Cancel"
+            style="@style/Widget.Material3.Button.OutlinedButton"/>
 
         <Button
             android:id="@+id/buttonDelete"
