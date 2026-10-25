@@ -1,9 +1,7 @@
 package com.example.smartpantrymanager;
 
-import android.view.View;
-import androidx.appcompat.app.AlertDialog;
-
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -56,7 +55,6 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         initCancelButton();
         initDeleteButton();
 
-        // Did the previous screen send us an item id?
         long passedId = getIntent().getLongExtra("pantryItemId", -1);
         if (passedId != -1) {
             currentItemId = passedId;
@@ -108,15 +106,14 @@ public class AddEditIngredientActivity extends AppCompatActivity {
 
         if (wasSuccessful) {
             Toast.makeText(this, "Ingredient deleted", Toast.LENGTH_SHORT).show();
-            finish();   // MainActivity.onResume() refreshes the list
+            finish();
         } else {
             Toast.makeText(this, "Could not delete. Please try again.", Toast.LENGTH_LONG).show();
         }
     }
 
-    // Loads an existing item from the database and fills the form
     private void loadItemForEditing(long itemId) {
-        PantryItem item = null;
+        PantryItem item;
         PantryDataSource ds = new PantryDataSource(this);
         try {
             ds.open();
@@ -144,7 +141,6 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         }
     }
 
-    // Finds where a unit sits in our units array (0 if not found)
     private int findUnitPosition(String unit) {
         for (int i = 0; i < units.length; i++) {
             if (units[i].equals(unit)) {
@@ -174,7 +170,6 @@ public class AddEditIngredientActivity extends AppCompatActivity {
             expiry = null;
         }
 
-        // currentItemId is -1 for a new item, or the real id when editing
         PantryItem item = new PantryItem(currentItemId, name, quantity, unit, expiry);
 
         boolean wasSuccessful;
@@ -182,9 +177,9 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         try {
             ds.open();
             if (currentItemId == -1) {
-                wasSuccessful = ds.insertPantryItem(item);     // ADD mode
+                wasSuccessful = ds.insertPantryItem(item);
             } else {
-                wasSuccessful = ds.updatePantryItem(item);     // EDIT mode
+                wasSuccessful = ds.updatePantryItem(item);
             }
             ds.close();
         } catch (Exception e) {
