@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
         initAddButton();
+        initRecipesButton();
     }
 
     @Override
@@ -82,6 +83,13 @@ public class MainActivity extends AppCompatActivity {
         buttonAdd.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddEditIngredientActivity.class);
             startActivity(intent);
+        });
+    }
+
+    private void initRecipesButton() {
+        Button buttonRecipes = findViewById(R.id.buttonSuggested);
+        buttonRecipes.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, SuggestedRecipesActivity.class));
         });
     }
 
