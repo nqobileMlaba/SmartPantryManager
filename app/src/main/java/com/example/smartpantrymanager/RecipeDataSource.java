@@ -47,7 +47,7 @@ public class RecipeDataSource {
         return recipes;
     }
 
-    // One recipe by id (used by Recipe Detail in the next step)
+
     public Recipe getRecipeById(long recipeId) {
         Recipe recipe = null;
         Cursor cursor = database.query(

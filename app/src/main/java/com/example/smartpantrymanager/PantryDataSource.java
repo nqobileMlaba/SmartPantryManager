@@ -29,10 +29,10 @@ public class PantryDataSource {
         ArrayList<PantryItem> items = new ArrayList<>();
 
         Cursor cursor = database.query(
-                PantryDBHelper.TABLE_PANTRY,     // which table
-                null,                            // null = all columns
-                null, null, null, null,          // no WHERE, GROUP BY or HAVING
-                PantryDBHelper.COL_PANTRY_NAME + " COLLATE NOCASE ASC"); // ORDER BY
+                PantryDBHelper.TABLE_PANTRY,
+                null,
+                null, null, null, null,
+                PantryDBHelper.COL_PANTRY_NAME + " COLLATE NOCASE ASC");
 
         while (cursor.moveToNext()) {
             long id = cursor.getLong(
@@ -53,7 +53,7 @@ public class PantryDataSource {
         return items;
     }
 
-    // CREATE: add one pantry item (we use it now for test data, and fully in Step 7)
+    // CREATE: add one pantry item
     public boolean insertPantryItem(PantryItem item) {
         ContentValues values = new ContentValues();
         values.put(PantryDBHelper.COL_PANTRY_NAME, item.getName());
@@ -75,8 +75,8 @@ public class PantryDataSource {
         Cursor cursor = database.query(
                 PantryDBHelper.TABLE_PANTRY,
                 null,
-                PantryDBHelper.COL_PANTRY_ID + " = ?",       // WHERE _id = ?
-                new String[]{String.valueOf(itemId)},        // the value for the ?
+                PantryDBHelper.COL_PANTRY_ID + " = ?",
+                new String[]{String.valueOf(itemId)},
                 null, null, null);
 
         if (cursor.moveToFirst()) {

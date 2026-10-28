@@ -17,10 +17,10 @@ public class NavHelper {
 
     private static void go(Activity from, Class<?> target) {
         if (from.getClass() == target) {
-            return;   // already on this screen
+            return;
         }
         Intent intent = new Intent(from, target);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);   // don't stack copies (as in your guide)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         from.startActivity(intent);
     }
 }

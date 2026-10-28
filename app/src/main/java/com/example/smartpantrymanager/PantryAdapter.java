@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryViewHolder> {
 
-    // ---------- NEW: a "contract" for whoever wants to hear about taps ----------
     public interface OnItemClickListener {
         void onItemClick(PantryItem item);
     }
@@ -44,7 +43,7 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         this.pantryItems = pantryItems;
     }
 
-    // ---------- NEW: the activity calls this to say "tell me about taps" ----------
+
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.clickListener = listener;
     }
@@ -89,7 +88,7 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
             }
         }
 
-        // when this row is tapped, pass the item to the listener
+
         holder.itemView.setOnClickListener(v -> {
             if (clickListener != null) {
                 clickListener.onItemClick(item);
@@ -114,7 +113,7 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         return String.valueOf(quantity);
     }
 
-    // Days from now until the date (negative = already past). Large number if unreadable.
+    // Days from now until the date (negative = already past).
     private long daysUntil(String dateText) {
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);

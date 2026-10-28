@@ -36,14 +36,14 @@ public class SettingsActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
-        // ---- Switch ----
+
         Switch switchAlert = findViewById(R.id.switchExpiryAlert);
         switchAlert.setChecked(prefs.getBoolean(KEY_EXPIRY_ALERT, false));
         switchAlert.setOnCheckedChangeListener((buttonView, isChecked) ->
                 getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                         .edit().putBoolean(KEY_EXPIRY_ALERT, isChecked).apply());
 
-        // ---- Days spinner ----
+
         Spinner spinnerDays = findViewById(R.id.spinnerExpiryDays);
         ArrayAdapter<Integer> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_dropdown_item, dayOptions);

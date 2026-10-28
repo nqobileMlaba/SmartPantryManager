@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class PantryDBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "smartpantry.db";
-    public static final int DATABASE_VERSION = 2;   // raised from 1 so recipes get added
+    public static final int DATABASE_VERSION = 2;
 
     //  Table 1: PantryItem
     public static final String TABLE_PANTRY = "PantryItem";
@@ -66,7 +66,7 @@ public class PantryDBHelper extends SQLiteOpenHelper {
         db.setForeignKeyConstraintsEnabled(true);
     }
 
-    // Runs ONCE on a brand-new install: build the tables, then add the recipes
+    // Runs ONCE: build the tables, then add the recipes
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_PANTRY);
@@ -75,7 +75,7 @@ public class PantryDBHelper extends SQLiteOpenHelper {
         seedRecipes(db);
     }
 
-    // Runs when the version goes up. Pantry items are NOT touched.
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 2) {
@@ -84,12 +84,12 @@ public class PantryDBHelper extends SQLiteOpenHelper {
         }
     }
 
-    // ---------- Helpers that insert one recipe / one ingredient ----------
+    // Helpers that insert one recipe / one ingredient
     private long addRecipe(SQLiteDatabase db, String name, String steps) {
         ContentValues values = new ContentValues();
         values.put(COL_RECIPE_NAME, name);
         values.put(COL_RECIPE_STEPS, steps);
-        return db.insert(TABLE_RECIPE, null, values);   // returns the new recipe's id
+        return db.insert(TABLE_RECIPE, null, values);
     }
 
     private void addIng(SQLiteDatabase db, long recipeId, String name, double qty, String unit) {
@@ -101,7 +101,7 @@ public class PantryDBHelper extends SQLiteOpenHelper {
         db.insert(TABLE_RECIPE_INGREDIENT, null, values);
     }
 
-    // ---------- The 18 recipes ----------
+    //  The 18 recipes
     private void seedRecipes(SQLiteDatabase db) {
         long id;
 

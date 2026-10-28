@@ -52,7 +52,7 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadSuggestions();   // recalculate every time, in case the pantry changed
+        loadSuggestions();
     }
 
     private void loadSuggestions() {
@@ -76,7 +76,7 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
         recipeAdapter.setRecipes(makeable);
 
         if (makeable.isEmpty()) {
-            textNoRecipes.setVisibility(View.VISIBLE);   // clear empty-result message
+            textNoRecipes.setVisibility(View.VISIBLE);
             rvRecipes.setVisibility(View.GONE);
         } else {
             textNoRecipes.setVisibility(View.GONE);

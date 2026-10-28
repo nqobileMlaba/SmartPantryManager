@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadPantryItems();   // refresh the list every time the screen becomes visible
+        loadPantryItems();
     }
 
     private void loadPantryItems() {
@@ -88,8 +88,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
     }
-
-
 
 
 }
